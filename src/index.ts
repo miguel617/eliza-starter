@@ -23,6 +23,7 @@ import {
   parseArguments,
 } from "./config/index.ts";
 import { initializeDatabase } from "./database/index.ts";
+import http from "http"; // 👈 added to expose a basic HTTP server
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -93,7 +94,6 @@ async function startAgent(character: Character, directClient: DirectClient) {
 
     directClient.registerAgent(runtime);
 
-    // report to console
     elizaLogger.debug(`Started ${character.name} as ${runtime.agentId}`);
 
     return runtime;
@@ -152,22 +152,25 @@ const startAgents = async () => {
     serverPort++;
   }
 
-  // upload some agent functionality into directClient
   directClient.startAgent = async (character: Character) => {
-    // wrap it so we don't have to inject directClient later
     return startAgent(character, directClient);
   };
 
-  console.log("Starting DirectClient on port", serverPort);
   directClient.start(serverPort);
   console.log(`Server should be listening on port ${serverPort}`);
-  
-  if (serverPort !== parseInt(settings.SERVER_PORT || "3000")) {
-    elizaLogger.log(`Server started on alternate port ${serverPort}`);
-  }
+
+  // ✅ Add basic HTTP server so Render detects port
+  const httpServer = http.createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("Eliza is running\n");
+  });
+
+  httpServer.listen(serverPort, () => {
+    console.log(`HTTP server bound to port ${serverPort}`);
+  });
 
   const isDaemonProcess = process.env.DAEMON_PROCESS === "true";
-  if(!isDaemonProcess) {
+  if (!isDaemonProcess) {
     elizaLogger.log("Chat started. Type 'exit' to quit.");
     const chat = startChat(characters);
     chat();
