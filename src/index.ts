@@ -159,7 +159,8 @@ const startAgents = async () => {
   };
 
   directClient.start(serverPort);
-
+  console.log(`Server should be listening on port ${serverPort}`);
+  
   if (serverPort !== parseInt(settings.SERVER_PORT || "3000")) {
     elizaLogger.log(`Server started on alternate port ${serverPort}`);
   }
