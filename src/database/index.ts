@@ -1,12 +1,11 @@
 import { PostgresDatabaseAdapter } from "@elizaos/adapter-postgres";
 
 export function initializeDatabase() {
-  const connectionString = process.env.ELIZA_DATABASE_URL || process.env.DATABASE_URL;
+  const connectionString = process.env.ELIZA_DATABASE_URL;
 
   if (!connectionString) {
-    throw new Error("❌ No database connection string provided in env variables.");
+    throw new Error("No database connection string found in ELIZA_DATABASE_URL");
   }
 
-  const db = new PostgresDatabaseAdapter(connectionString);
-  return db;
+  return new PostgresDatabaseAdapter(connectionString);
 }
