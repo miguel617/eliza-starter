@@ -80,7 +80,7 @@ async function startAgent(character: Character, directClient: DirectClient) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
 
-    const db = initializeDatabase(dataDir);
+    const db = initializeDatabase();
 
     await db.init();
 
