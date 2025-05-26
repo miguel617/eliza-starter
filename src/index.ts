@@ -158,6 +158,7 @@ const startAgents = async () => {
     return startAgent(character, directClient);
   };
 
+  console.log("Starting DirectClient on port", serverPort);
   directClient.start(serverPort);
   console.log(`Server should be listening on port ${serverPort}`);
   
